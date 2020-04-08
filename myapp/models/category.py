@@ -1,21 +1,21 @@
 # Created by jmlm at 30/03/2020-20:03 - testP5
-from tools.databaseSQL import databaseConnect
-from tools import jmlmtools
-import json
-import requests
-from setup import *
+from myapp.tools.jmlmtools import databaseConnect
+from myapp.setup import *
 """"
 Category table --> 
 """
 
 
-class categoryTable:
+class category:
 
     def __init__(self) -> object:
         """
         init --> just init the variables !
         """
         self.tableName = TABLES["T_CATEGORY"]
+        # Data
+        self.idCategory = ""
+        self.categoryName = ""
 
 
     def create_table_category(self):

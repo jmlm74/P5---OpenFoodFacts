@@ -1,14 +1,64 @@
-# Created by jmlm at 30/03/2020-22:53 - testP5
-from setup import DBNAME,DBUSER,DBHOST,DBPW
+# Created by jmlm at 31/03/2020-17:01
+import platform, os
+import argparse
+import time
+from myapp.setup import *
 import mysql.connector
 from mysql.connector import Error
+
+
 """
-class databaseSQL --> to use the database : connect close and orders
+mes imports a moi que j'ai
 """
+
+def clear():
+    """
+    It does his name : clearscreen (can't test on Mac) --> StackoverFlow
+    """
+    if platform.system() == "Windows":
+        os.system("cls")
+    else:
+        print("\033c", end="")
+
+
+class SmartFormatter(argparse.HelpFormatter):
+    """
+    \n in help text for argparse = newline
+    just start your help text with R|
+    """
+    def _split_lines(self, text, width):
+        if text.startswith('R|'):
+            return text[2:].splitlines()
+        # this is the RawTextHelpFormatter._split_lines
+        return argparse.HelpFormatter._split_lines(self, text, width)
+
+
+def parse_arguments():
+    """
+    return parsed agrs --> treated by the caller
+    """
+    parser = argparse.ArgumentParser(formatter_class=SmartFormatter)
+    parser.add_argument("-d", '--db', choices=['test','create'],help="R|'test' to test database \n"
+                                    "'create' to fill the database. The tables will be automatically dropped and recreated ")
+    return parser.parse_args()
+
+
+def jmlm_now():
+    now = time.strftime('%Y-%m-%d %H-%M-%S')
+    return now
+
+def get_env():
+    import sys
+    print("fichier : ",__file__)
+    print("package : ",__package__)
+    print("curdir : ",os.getcwd())
+    print("syspath : ",sys.path)
+
+
 
 class databaseConnect:
     """
-    class databaseSQL --> to use the database : connect close and orders
+    class databaseConnect --> to use the database : connect close and orders
     """
     __db = None
     __host = None

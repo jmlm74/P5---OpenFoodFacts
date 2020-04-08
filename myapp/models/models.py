@@ -1,32 +1,30 @@
 # Created by jmlm at 07/04/2020-15:08 - P5
-from models.category import categoryTable
-from models.brands import brandsTable
-from models.products import productsTable
-from models.products_brands import products_brandsTable
-from tools.databaseSQL import databaseConnect
-from tools import jmlmtools
-from setup import *
-
+from myapp.models.category import category
+from myapp.models.brand import brand
+from myapp.models.product import product
+from myapp.models.products_brands import products_brands
+from myapp.tools.jmlmtools import databaseConnect
+from myapp.setup import *
 
 
 def fill_database():
     """
-    drop table T_Products_Brands (products <-> brands)
+    drop table T_Products_Brands (product <-> brand)
     """
-    tableProductsBrands = products_brandsTable()
+    tableProductsBrands = products_brands()
     tableProductsBrands.drop_table_products_brands()
 
     """
     drop table T_products
     """
-    tableproducts = productsTable()
+    tableproducts = product()
     tableproducts.drop_table_products()
 
 
     """
     create & fill table T_Category
     """
-    tableCat = categoryTable()
+    tableCat = category()
     tableCat.create_table_category()
     tableCat.fill_table_category()
 
@@ -41,7 +39,7 @@ def fill_database():
     """
     create and fill table T_brands (need tempProducts)
     """
-    tableBrands = brandsTable()
+    tableBrands = brand()
     tableBrands.create_table_brands()
     tableBrands.fill_table_brands()
 

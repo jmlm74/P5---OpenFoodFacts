@@ -1,4 +1,9 @@
 # Created by jmlm at 30/03/2020-22:29 - testP5
+from pathlib import Path
+
+# the curent path
+BASEDIR = Path(__file__).resolve().parent
+
 
 # DATABASE
 DBHOST = '192.168.1.99'  # Database host (may be localhost)
@@ -20,4 +25,11 @@ URL_PRODUCTS1 = 'https://world.openfoodfacts.org/cgi/search.pl?action=process&ta
 URL_PRODUCTS2 = '&sort_by=product_name&page_size=20&action=process&json=true,&page='
 
 # Categories
-CAT_LIST = ['pate-a-tartiner','fruits secs','gateaux','Volailles','Boissons gazeuses','sandwichs','Snacks-salés']
+CAT_LIST = ['Poissons',
+            'pate-a-tartiner',
+            'fruits secs',
+            'gateaux',
+            'Volailles',
+            'Desserts',
+            'sandwichs',
+            'Plats préparés à la viande']

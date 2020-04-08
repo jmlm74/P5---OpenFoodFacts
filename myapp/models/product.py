@@ -1,15 +1,16 @@
 # Created by jmlm at 30/03/2020-20:03 - testP5
-from tools.databaseSQL import databaseConnect
-from tools import jmlmtools
-from setup import *
-import json
+from myapp.tools.jmlmtools import databaseConnect
+from myapp.tools import jmlmtools
+from myapp.setup import *
 import requests
-import unicodedata
+import json
+
 """"
 Products table --> 
 """
 
-class productsTable:
+
+class product:
 
     def __init__(self) -> object:
         """
@@ -20,7 +21,14 @@ class productsTable:
         # self.url = 'https://fr.openfoodfacts.org/brands.json'
         self.url1 = URL_PRODUCTS1
         self.url2 = URL_PRODUCTS2
-
+        # Data
+        self.idProduct = 0
+        self.productName = ""
+        self.url = ""
+        self.nutriscore_score = 0
+        self.nutriscore_grade = ""
+        self.idCategory = 0
+        self.dateCreation = jmlmtools.jmlm_now()
 
     def create_table_products(self):
         """
@@ -41,7 +49,6 @@ class productsTable:
                   "PRIMARY KEY (idProduct)) ENGINE=InnoDB CHARSET latin1" % self.tableName
             cursor.execute(sql)
 
-
     def create_temptable_products(self):
         """
         Drop the table if exists and create it
@@ -55,12 +62,11 @@ class productsTable:
                   "url TEXT NULL, " \
                   "nutriscore_score SMALLINT DEFAULT 100," \
                   "nutriscore_grade CHAR(1) DEFAULT 'z', " \
-                  "brands VARCHAR(100), "\
+                  "brand VARCHAR(100), " \
                   "idCategory INT UNSIGNED," \
-                  "CONSTRAINT fk_tempcategory FOREIGN KEY (idCategory) REFERENCES T_Categories(idCategory) ," \
                   "PRIMARY KEY (idProduct)) ENGINE=InnoDB CHARACTER SET latin1" % self.temptableName
+                  #  "CONSTRAINT fk_tempcategory FOREIGN KEY (idCategory) REFERENCES T_Categories(idCategory) ," \
             cursor.execute(sql)
-
 
     def fill_temptable_products(self):
         dbconn = databaseConnect()
@@ -69,11 +75,11 @@ class productsTable:
             cursor.execute(sql)
             categories = cursor.fetchall()
             for category in categories:
-                print("Récupere données : {} - {}".format(category[0],category[1]))
-                sql1 = "insert into %s (productName,url,nutriscore_score,nutriscore_grade,brands,idCategory)" \
+                print("Récupere données : {} - {}".format(category[0], category[1]))
+                sql1 = "insert into %s (productName,url,nutriscore_score,nutriscore_grade,brand,idCategory)" \
                        " values" % self.temptableName
-                for i in range(2,7,2):
-                    url=self.url1 + category[1] + self.url2 + str(i)
+                for i in range(2, 7, 2):
+                    url = self.url1 + category[1] + self.url2 + str(i)
                     response = requests.get(url)
                     if (response.status_code) == 200:
                         # text = json.loads(response.content.decode('latin1'))
@@ -81,32 +87,32 @@ class productsTable:
                         for t in text['products']:
                             if 'product_name' in t and len(t['product_name']) > 0:
                                 t['product_name'] = t['product_name'][:79]
-                                t['product_name'] = t['product_name'].replace("'"," ")
+                                t['product_name'] = t['product_name'].replace("'", " ")
                                 if 'url' not in t:
                                     t['url'] = ''
                                 if 'nutriscore_score' not in t:
                                     t['nutriscore_score'] = "100"
                                 if 'nutriscore_grade' not in t:
                                     t['nutriscore_grade'] = "Z"
-                                if 'brands' not in t:
-                                    t['brands'] = "Inconnu"
-                                t['brands'] = t['brands'][:49]
-                                if len(t['brands']) == 0:
-                                    t['brands'] = "Inconnu"
-                                t['brands'] = t['brands'].replace("'", " ")
-                                sql2 = "('%s','%s',%s,'%s','%s',%s)"% (  t['product_name'],
-                                                                    t['url'],
-                                                                    t['nutriscore_score'],
-                                                                    t['nutriscore_grade'],
-                                                                    t['brands'],
-                                                                    category[0])
-                                sql= sql1 + sql2
+                                if 'brand' not in t:
+                                    t['brand'] = "Inconnu"
+                                t['brand'] = t['brand'][:49]
+                                if len(t['brand']) == 0:
+                                    t['brand'] = "Inconnu"
+                                t['brand'] = t['brand'].replace("'", " ")
+                                sql2 = "('%s','%s',%s,'%s','%s',%s)" % (t['product_name'],
+                                                                        t['url'],
+                                                                        t['nutriscore_score'],
+                                                                        t['nutriscore_grade'],
+                                                                        t['brand'],
+                                                                        category[0])
+                                sql = sql1 + sql2
                                 cursor.execute((sql))
                 dbconn.commit()
 
     def fill_table_products(self):
         """
-        insert from T_temp_products (distinct products)
+        insert from T_temp_products (distinct product)
         :param self:
         :return:
         """
@@ -117,17 +123,12 @@ class productsTable:
             cursor.execute(sql)
             dbconn.commit()
 
-
     def drop_temptable_products(self):
         with databaseConnect() as cursor:
             sql = "drop table if exists %s " % self.temptableName
             cursor.execute(sql)
 
-
     def drop_table_products(self):
         with databaseConnect() as cursor:
             sql = "drop table if exists %s " % self.tableName
             cursor.execute(sql)
-
-
-

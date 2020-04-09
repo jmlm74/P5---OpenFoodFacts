@@ -14,8 +14,8 @@ def main():
     elif args.db == "test":
         models.test_database()
         exit(0)
-    appliConsole  = apptextview.consoleview()
-    appliConsole.displayMenu1()
+    appliConsole  = apptextview.console_view()
+    appliConsole.appli()
 
 
 if __name__ == "__main__":

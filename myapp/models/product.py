@@ -1,5 +1,5 @@
 # Created by jmlm at 30/03/2020-20:03 - testP5
-from myapp.tools.jmlmtools import databaseConnect
+from myapp.tools.jmlmtools import database_connect
 from myapp.tools import jmlmtools
 from myapp.setup import *
 import requests
@@ -10,7 +10,7 @@ Products table -->
 """
 
 
-class product:
+class Product:
 
     def __init__(self) -> object:
         """
@@ -35,7 +35,7 @@ class product:
         Drop the table if exists and create it
         :return:
         """
-        with databaseConnect() as cursor:
+        with database_connect() as cursor:
             sql = "drop table if exists %s " % self.tableName
             cursor.execute(sql)
             sql = "CREATE TABLE %s (idProduct INT UNSIGNED NOT NULL AUTO_INCREMENT, " \
@@ -54,7 +54,7 @@ class product:
         Drop the table if exists and create it
         :return:
         """
-        with databaseConnect() as cursor:
+        with database_connect() as cursor:
             sql = "drop table if exists %s " % self.temptableName
             cursor.execute(sql)
             sql = "CREATE TABLE %s (idProduct INT UNSIGNED NOT NULL AUTO_INCREMENT, " \
@@ -62,21 +62,21 @@ class product:
                   "url TEXT NULL, " \
                   "nutriscore_score SMALLINT DEFAULT 100," \
                   "nutriscore_grade CHAR(1) DEFAULT 'z', " \
-                  "brand VARCHAR(100), " \
+                  "Brand VARCHAR(100), " \
                   "idCategory INT UNSIGNED," \
                   "PRIMARY KEY (idProduct)) ENGINE=InnoDB CHARACTER SET latin1" % self.temptableName
                   #  "CONSTRAINT fk_tempcategory FOREIGN KEY (idCategory) REFERENCES T_Categories(idCategory) ," \
             cursor.execute(sql)
 
     def fill_temptable_products(self):
-        dbconn = databaseConnect()
+        dbconn = database_connect()
         with dbconn as cursor:
             sql = "select idCategory,categoryName from T_Categories"
             cursor.execute(sql)
             categories = cursor.fetchall()
             for category in categories:
                 print("Récupere données : {} - {}".format(category[0], category[1]))
-                sql1 = "insert into %s (productName,url,nutriscore_score,nutriscore_grade,brand,idCategory)" \
+                sql1 = "insert into %s (productName,url,nutriscore_score,nutriscore_grade,Brand,idCategory)" \
                        " values" % self.temptableName
                 for i in range(2, 7, 2):
                     url = self.url1 + category[1] + self.url2 + str(i)
@@ -94,17 +94,17 @@ class product:
                                     t['nutriscore_score'] = "100"
                                 if 'nutriscore_grade' not in t:
                                     t['nutriscore_grade'] = "Z"
-                                if 'brand' not in t:
-                                    t['brand'] = "Inconnu"
-                                t['brand'] = t['brand'][:49]
-                                if len(t['brand']) == 0:
-                                    t['brand'] = "Inconnu"
-                                t['brand'] = t['brand'].replace("'", " ")
+                                if 'Brand' not in t:
+                                    t['Brand'] = "Inconnu"
+                                t['Brand'] = t['Brand'][:49]
+                                if len(t['Brand']) == 0:
+                                    t['Brand'] = "Inconnu"
+                                t['Brand'] = t['Brand'].replace("'", " ")
                                 sql2 = "('%s','%s',%s,'%s','%s',%s)" % (t['product_name'],
                                                                         t['url'],
                                                                         t['nutriscore_score'],
                                                                         t['nutriscore_grade'],
-                                                                        t['brand'],
+                                                                        t['Brand'],
                                                                         category[0])
                                 sql = sql1 + sql2
                                 cursor.execute((sql))
@@ -112,23 +112,36 @@ class product:
 
     def fill_table_products(self):
         """
-        insert from T_temp_products (distinct product)
+        insert from T_temp_products (distinct Product)
         :param self:
         :return:
         """
         sql = "insert into T_Products (productName,url,nutriscore_score,nutriscore_grade,idCategory) select " \
               "productName,url, nutriscore_score,nutriscore_grade,idCategory from T_TempProducts group by productName;"
-        dbconn = databaseConnect()
+        dbconn = database_connect()
         with dbconn as cursor:
             cursor.execute(sql)
             dbconn.commit()
 
     def drop_temptable_products(self):
-        with databaseConnect() as cursor:
+        with database_connect() as cursor:
             sql = "drop table if exists %s " % self.temptableName
             cursor.execute(sql)
 
     def drop_table_products(self):
-        with databaseConnect() as cursor:
+        with database_connect() as cursor:
             sql = "drop table if exists %s " % self.tableName
             cursor.execute(sql)
+
+    def list_products_bycat(self,idcategory):
+        """
+        :param idcategory:
+        :return: rows from fetchall
+        """
+        sql = "select idProduct, productName,url, nutriscore_score, nutriscore_grade,idCategory, " \
+              "dateCreation from %s where idCategory=" % self.tableName
+        sql = sql + """%s  order by idProduct"""
+        with database_connect() as cursor:
+            cursor.execute(sql,(idcategory, ))
+            rows = cursor.fetchall()
+        return rows

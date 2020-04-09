@@ -1,14 +1,14 @@
 # Created by jmlm at 30/03/2020-20:03 - testP5
-from myapp.tools.jmlmtools import databaseConnect
+from myapp.tools.jmlmtools import database_connect
 from myapp.setup import *
 from myapp.tools.jmlmtools import jmlm_now
 
 """"
-brand table --> 
+Brand table --> 
 """
 
 
-class brand:
+class Brand:
 
     def __init__(self) -> object:
         """
@@ -26,7 +26,7 @@ class brand:
         Drop the table if exists and create it
         :return:
         """
-        with databaseConnect() as cursor:
+        with database_connect() as cursor:
             sql = "drop table if exists %s " % self.tableName
             param = ""
             cursor.execute(sql, param)
@@ -38,11 +38,11 @@ class brand:
 
     def fill_table_brands(self):
         """
-        get distinct brand in temp_products table and insert in brand table
+        get distinct Brand in temp_products table and insert in Brand table
         :return:
         """
-        sql = 'insert into T_Brands (brandName) SELECT distinct(brand) FROM test.T_TempProducts order by 1;'
-        dbconn = databaseConnect()
+        sql = 'insert into T_Brands (brandName) SELECT distinct(Brand) FROM test.T_TempProducts order by 1;'
+        dbconn = database_connect()
         with dbconn as cursor:
             cursor.execute(sql)
             dbconn.commit()

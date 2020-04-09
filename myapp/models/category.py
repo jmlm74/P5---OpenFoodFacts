@@ -1,12 +1,12 @@
 # Created by jmlm at 30/03/2020-20:03 - testP5
-from myapp.tools.jmlmtools import databaseConnect
+from myapp.tools.jmlmtools import database_connect
 from myapp.setup import *
 """"
 Category table --> 
 """
 
 
-class category:
+class Category:
 
     def __init__(self) -> object:
         """
@@ -23,7 +23,7 @@ class category:
         Drop the table if exists and create it
         :return:
         """
-        dbconn = databaseConnect()
+        dbconn = database_connect()
         with dbconn as cursor:
             sql = "drop table if exists %s " % self.tableName
             param = ""
@@ -43,7 +43,7 @@ class category:
         :return: None
         """
         sql1 = "insert into %s (categoryName) values " % self.tableName
-        dbconn = databaseConnect()
+        dbconn = database_connect()
         with dbconn as cursor:
             for cat in CAT_LIST:
                     sql = sql1 + """(%s)"""
@@ -52,4 +52,18 @@ class category:
             dbconn.commit()
             dbconn.disconnect_db()
 
+    def list_categories(self):
+        sql = "select idCategory, categoryName from " + self.tableName + " order by 1"
+        dbconn = database_connect()
+        with dbconn as cursor:
+            cursor.execute(sql)
+            rows = cursor.fetchall()
+        return rows
 
+    def get_category(self,id):
+        sql = "select idCategory, categoryName,dateCreation from %s where idCategory=" % self.tableName
+        sql = sql + """%s"""
+        with database_connect() as cursor:
+            cursor.execute(sql,(id,))
+            row = cursor.fetchone()
+        return row

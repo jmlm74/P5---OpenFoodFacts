@@ -56,9 +56,9 @@ def get_env():
 
 
 
-class databaseConnect:
+class database_connect:
     """
-    class databaseConnect --> to use the database : connect close and orders
+    class database_connect --> to use the database : connect close and orders
     """
     __db = None
     __host = None

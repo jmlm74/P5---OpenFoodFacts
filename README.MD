@@ -1,4 +1,4 @@
-# P5-OpenFoodFacts
+# P5-OpenFoodFacts  
 
 ## P5 du parcours DA Python d'OpenClassRoom
 
@@ -6,8 +6,14 @@
 **≥ 3.7**
 
 ### Requirements (fichier requirements.txt)
+certifi  
+chardet  
+idna  
 mysql-connector  
-requests
+prompt-toolkit  
+requests  
+urllib3  
+wcwidth  
 
 ### Base de données
 MariaDB 10.3
@@ -30,6 +36,17 @@ Taper : python3 -m myapp.main
 -t create --> (re)crée les tables et les rempli <br />
 -t test --> teste connexion à la base et les tables 
 
-### fin
+### Menus
+**Menu 1 :**   
+1 - Categories  
+2 - Liste aliments substitués
 
+__Menu 1.1 :__  
+Liste categories --> choix d'une categorie
 
+**Menu 1.2 :**
+Liste des aliments substitués sous forme de tableau
+
+**Menu 1.1.1 :**
+Liste des produits de la catégorie choise 
+Possibilité d'en coisir un afin de le substituer

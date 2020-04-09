@@ -1,19 +1,19 @@
 # Created by jmlm at 02/04/2020-18:46 - testP5
-from myapp.tools.jmlmtools import databaseConnect
+from myapp.tools.jmlmtools import database_connect
 from myapp.setup import *
 
 """
 """
 
 
-class products_brands:
+class ProductsBrands:
     """
     """
 
     def __init__(self) -> object:
         """
         select B.idBrands,B.BrandName,TP.ProductName,P.idProduct from T_Brands as B inner join T_TempProducts as TP
-        on brand = brandName inner join T_Products as P on TP.productName = P.productName order by 1;
+        on Brand = brandName inner join T_Products as P on TP.productName = P.productName order by 1;
 
         :return:
         """
@@ -27,7 +27,7 @@ class products_brands:
         Drop the table if exists and create it
         :return:
         """
-        with databaseConnect() as cursor:
+        with database_connect() as cursor:
             sql = "drop table if exists %s " % self.tableName
             param = ""
             cursor.execute(sql, param)
@@ -42,19 +42,19 @@ class products_brands:
 
     def fill_table_products_brands(self):
         """
-        get distinct brand in temp_products table and insert in brand table
+        get distinct Brand in temp_products table and insert in Brand table
         :return:
         """
-        sql = 'insert into T_Brands (brandName) SELECT distinct(brand) FROM test.T_TempProducts order by 1;'
+        sql = 'insert into T_Brands (brandName) SELECT distinct(Brand) FROM test.T_TempProducts order by 1;'
         sql = "insert into %s (idBrand,idProduct) select B.idBrand,P.idProduct from T_Brands " \
-              "as B inner join T_TempProducts as TP on brand = brandName inner join T_Products as P on " \
+              "as B inner join T_TempProducts as TP on Brand = brandName inner join T_Products as P on " \
               "TP.productName = P.productName order by 1;" % self.tableName
-        dbconn = databaseConnect()
+        dbconn = database_connect()
         with dbconn as cursor:
             cursor.execute(sql)
             dbconn.commit()
 
     def drop_table_products_brands(self):
-        with databaseConnect() as cursor:
+        with database_connect() as cursor:
             sql = "drop table if exists %s " % self.tableName
             cursor.execute(sql)

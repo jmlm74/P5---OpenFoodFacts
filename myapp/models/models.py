@@ -1,30 +1,30 @@
 # Created by jmlm at 07/04/2020-15:08 - P5
-from myapp.models.category import category
-from myapp.models.brand import brand
-from myapp.models.product import product
-from myapp.models.products_brands import products_brands
-from myapp.tools.jmlmtools import databaseConnect
+from myapp.models.category import Category
+from myapp.models.brand import Brand
+from myapp.models.product import Product
+from myapp.models.productsbrands import ProductsBrands
+from myapp.tools.jmlmtools import database_connect
 from myapp.setup import *
 
 
 def fill_database():
     """
-    drop table T_Products_Brands (product <-> brand)
+    drop table T_Products_Brands (Product <-> Brand)
     """
-    tableProductsBrands = products_brands()
+    tableProductsBrands = ProductsBrands()
     tableProductsBrands.drop_table_products_brands()
 
     """
     drop table T_products
     """
-    tableproducts = product()
+    tableproducts = Product()
     tableproducts.drop_table_products()
 
 
     """
     create & fill table T_Category
     """
-    tableCat = category()
+    tableCat = Category()
     tableCat.create_table_category()
     tableCat.fill_table_category()
 
@@ -39,7 +39,7 @@ def fill_database():
     """
     create and fill table T_brands (need tempProducts)
     """
-    tableBrands = brand()
+    tableBrands = Brand()
     tableBrands.create_table_brands()
     tableBrands.fill_table_brands()
 
@@ -62,7 +62,7 @@ def test_database():
 
     :return:
     """
-    connex = databaseConnect()
+    connex = database_connect()
     test = connex.connect_db()
     if not test :
         print("Erreur de connexion")

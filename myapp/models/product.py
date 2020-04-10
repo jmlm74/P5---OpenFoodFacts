@@ -62,7 +62,7 @@ class Product:
                   "url TEXT NULL, " \
                   "nutriscore_score SMALLINT DEFAULT 100," \
                   "nutriscore_grade CHAR(1) DEFAULT 'z', " \
-                  "Brand VARCHAR(100), " \
+                  "Store VARCHAR(100), " \
                   "idCategory INT UNSIGNED," \
                   "PRIMARY KEY (idProduct)) ENGINE=InnoDB CHARACTER SET latin1" % self.temptableName
                   #  "CONSTRAINT fk_tempcategory FOREIGN KEY (idCategory) REFERENCES T_Categories(idCategory) ," \
@@ -75,8 +75,8 @@ class Product:
             cursor.execute(sql)
             categories = cursor.fetchall()
             for category in categories:
-                print("Récupere données : {} - {}".format(category[0], category[1]))
-                sql1 = "insert into %s (productName,url,nutriscore_score,nutriscore_grade,Brand,idCategory)" \
+                print("Récupère données : {} - {}".format(category[0], category[1]))
+                sql1 = "insert into %s (productName,url,nutriscore_score,nutriscore_grade,Store,idCategory)" \
                        " values" % self.temptableName
                 for i in range(2, 7, 2):
                     url = self.url1 + category[1] + self.url2 + str(i)
@@ -94,17 +94,17 @@ class Product:
                                     t['nutriscore_score'] = "100"
                                 if 'nutriscore_grade' not in t:
                                     t['nutriscore_grade'] = "Z"
-                                if 'Brand' not in t:
-                                    t['Brand'] = "Inconnu"
-                                t['Brand'] = t['Brand'][:49]
-                                if len(t['Brand']) == 0:
-                                    t['Brand'] = "Inconnu"
-                                t['Brand'] = t['Brand'].replace("'", " ")
+                                if 'brands' not in t:
+                                    t['brands'] = "Inconnu"
+                                t['brands'] = t['brands'][:49]
+                                if len(t['brands']) == 0:
+                                    t['brands'] = "Inconnu"
+                                t['brands'] = t['brands'].replace("'", " ")
                                 sql2 = "('%s','%s',%s,'%s','%s',%s)" % (t['product_name'],
                                                                         t['url'],
                                                                         t['nutriscore_score'],
                                                                         t['nutriscore_grade'],
-                                                                        t['Brand'],
+                                                                        t['brands'],
                                                                         category[0])
                                 sql = sql1 + sql2
                                 cursor.execute((sql))
@@ -145,3 +145,12 @@ class Product:
             cursor.execute(sql,(idcategory, ))
             rows = cursor.fetchall()
         return rows
+
+    def get_product(self,idproduct):
+        sql = "select idProduct, productName,url,nutriscore_score,nutriscore_grade,idCategory, " \
+              "dateCreation from %s where idProduct=" % self.tableName
+        sql = sql + """%s"""
+        with database_connect() as cursor:
+            cursor.execute(sql,(idproduct,))
+            row = cursor.fetchone()
+        return row

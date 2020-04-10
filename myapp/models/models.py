@@ -1,24 +1,24 @@
 # Created by jmlm at 07/04/2020-15:08 - P5
 from myapp.models.category import Category
-from myapp.models.brand import Brand
+from myapp.models.store import Store
 from myapp.models.product import Product
-from myapp.models.productsbrands import ProductsBrands
+from myapp.models.productsstores import ProductsStores
 from myapp.tools.jmlmtools import database_connect
 from myapp.setup import *
 
 
 def fill_database():
     """
-    drop table T_Products_Brands (Product <-> Brand)
+    drop table T_Products_Brands (Product <-> Store)
     """
-    tableProductsBrands = ProductsBrands()
-    tableProductsBrands.drop_table_products_brands()
+    table_products_stores = ProductsStores()
+    table_products_stores.drop_table_products_stores()
 
     """
     drop table T_products
     """
-    tableproducts = Product()
-    tableproducts.drop_table_products()
+    table_products = Product()
+    table_products.drop_table_products()
 
 
     """
@@ -31,28 +31,28 @@ def fill_database():
     """
     create and fill tables T_tempProducts and Products
     """
-    tableproducts.create_temptable_products()
-    tableproducts.create_table_products()
-    tableproducts.fill_temptable_products()
-    tableproducts.fill_table_products()
+    table_products.create_temptable_products()
+    table_products.create_table_products()
+    table_products.fill_temptable_products()
+    table_products.fill_table_products()
 
     """
     create and fill table T_brands (need tempProducts)
     """
-    tableBrands = Brand()
-    tableBrands.create_table_brands()
-    tableBrands.fill_table_brands()
+    table_stores = Store()
+    table_stores.create_table_stores()
+    table_stores.fill_table_stores()
 
     """
     create and fill table T_Brands_Products 
     """
-    tableProductsBrands.create_table_products_brands()
-    tableProductsBrands.fill_table_products_brands()
+    table_products_stores.create_table_products_stores()
+    table_products_stores.fill_table_products_stores()
 
     """
     drop temp table
     """
-    tableproducts.drop_temptable_products()
+    table_products.drop_temptable_products()
 
 
 def test_database():
@@ -84,13 +84,16 @@ def test_database():
             else:
                 print("ERREUR tests existence table")
 #ToDo mettre > au lieu de < --> tests et demo
-        sql = 'SELECT idCategory from T_Categories where TIMESTAMPDIFF(DAY,now(),dateCreation)<7 limit 1'
-        cursor.execute(sql)
-        result = cursor.fetchone()
-        if result:
-            print("ATTENTION : Les données ont plus de 7 jours. Il est vivement conseillé de récupérer les nouvelles "
-                  "données. Pour cela réexecuter le programme avec le parametre '-d create'")
-        else:
-            print("La date des données est inférieure à 7 jours.")
+        sql = 'SELECT idCategory from T_Categories where TIMESTAMPDIFF(DAY,now(),dateCreation)<30 limit 1'
+        try:
+            cursor.execute(sql)
+            result = cursor.fetchone()
+            if result:
+                print("ATTENTION : Les données ont plus de 30 jours. Il est vivement conseillé de récupérer les nouvelles "
+                      "données. Pour cela réexecuter le programme avec le parametre '-d create'")
+            else:
+                print("La date des données est inférieure à 7 jours.")
+        except:
+            pass
 
         connex.disconnect_db()

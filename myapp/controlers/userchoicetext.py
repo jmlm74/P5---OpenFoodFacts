@@ -3,7 +3,6 @@ from __future__ import print_function, unicode_literals
 from PyInquirer import prompt, Separator, style_from_dict, Token
 from examples import custom_style_3, custom_style_2, custom_style_1
 
-import pandas as pd
 
 from myapp.setup import *
 from myapp.models.category import Category
@@ -15,6 +14,7 @@ class UserChoiceText:
     def __init__(self):
         self.__choixN = 0
         self.__choixT = ""
+        self.__choixL = []
         self.couleur_prompt = ""
         self.msg_prompt = ""
 
@@ -27,14 +27,24 @@ class UserChoiceText:
         from prompt_toolkit.shortcuts import Token, prompt
 
         try:
-            # self.choixN = int(prompt("Entrez votre choix : ",validator = self.NumberValidation()))
-            # message = [(Token.Blue,"Entrez votre choix : "),]
             self.msg_prompt = "Entrez votre choix : "
             self.couleur_prompt = Token.Blue
             self.__choixN = int(prompt(get_prompt_tokens=self.message, style=style))
             return self.__choixN
         except ValueError:
             return 999
+
+    def choice_prompt_text(self,message):
+        from prompt_toolkit.shortcuts import Token, prompt
+
+        try:
+            self.msg_prompt = message
+            self.couleur_prompt = Token.Blue
+            self.__choixT = str(prompt(get_prompt_tokens=self.message, style=style))
+            return self.__choixT
+        except ValueError:
+            return "999"
+
 
     def category_choice(self):
         category = Category()
@@ -57,7 +67,7 @@ class UserChoiceText:
 
     def product_choice_bycat(self, idcategory):
         cat = Category()
-        category = cat.get_category(idcategory)
+        category = cat.get_category_byid(idcategory)
         msg = "Choisissez un produit de la catégorie %s " % category[1]
         product = Product()
         products = product.list_products_bycat(idcategory)
@@ -76,8 +86,10 @@ class UserChoiceText:
         ind = response['menu3'].split()
         rc = int(ind[0])
         return rc
-
+"""
     def product_substitut(self, idproduct):
         prod = Product()
-        product = prod.get_product(idproduct)
+        product = prod.get_product_byid(idproduct)
         return product
+"""
+

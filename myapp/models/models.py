@@ -2,17 +2,24 @@
 from myapp.models.category import Category
 from myapp.models.store import Store
 from myapp.models.product import Product
-from myapp.models.productsstores import ProductsStores
+from myapp.models.productsstore import ProductsStore
+from myapp.models.bookmark import  Bookmark
 from myapp.tools.jmlmtools import database_connect
 from myapp.setup import *
 
 
 def fill_database():
     """
-    drop table T_Products_Brands (Product <-> Store)
+    drop table T_Stores (Product <-> Store)
     """
-    table_products_stores = ProductsStores()
+    table_products_stores = ProductsStore()
     table_products_stores.drop_table_products_stores()
+
+    """
+    drop table T_bookmarks
+    """
+    table_products_bookmarks = Bookmark()
+    table_products_bookmarks.drop_table_bookmarks()
 
     """
     drop table T_products
@@ -42,6 +49,11 @@ def fill_database():
     table_stores = Store()
     table_stores.create_table_stores()
     table_stores.fill_table_stores()
+
+    """
+    create table T-Bookmarks
+    """
+    table_products_bookmarks.create_table_bookmarks()
 
     """
     create and fill table T_Brands_Products 

@@ -146,7 +146,7 @@ class Product:
             rows = cursor.fetchall()
         return rows
 
-    def get_product(self,idproduct):
+    def get_product_byid(self, idproduct):
         sql = "select idProduct, productName,url,nutriscore_score,nutriscore_grade,idCategory, " \
               "dateCreation from %s where idProduct=" % self.tableName
         sql = sql + """%s"""
@@ -154,3 +154,13 @@ class Product:
             cursor.execute(sql,(idproduct,))
             row = cursor.fetchone()
         return row
+
+    def get_product_bookmarks(self, idproduct, ):
+        sql = "select  idProduct, productName,substr(url,1,53),nutriscore_score,nutriscore_grade,idCategory " \
+              "from %s where idcategory = (select idcategory from T_Products where " \
+              "idProduct = %d) and nutriscore_score <= (select nutriscore_score from T_Products " \
+              "where idProduct = %d order by nutriscore_score desc)" % (self.tableName,idproduct,idproduct)
+        with database_connect() as cursor:
+            cursor.execute(sql)
+            rows = cursor.fetchall()
+        return rows

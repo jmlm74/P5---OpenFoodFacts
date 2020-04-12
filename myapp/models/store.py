@@ -46,3 +46,12 @@ class Store:
         with dbconn as cursor:
             cursor.execute(sql)
             dbconn.commit()
+
+    def get_store_byproduct(self,idproduct):
+        sql = """Select storeName from T_Products_stores as T  inner join T_Products as P  \
+             on P.idProduct=T.idProduct inner join T_Stores as S on T.idStore = S.idStore  \
+             where P.idProduct = %s"""
+        with database_connect() as cursor:
+            cursor.execute(sql,(idproduct,))
+            rows = cursor.fetchall()
+        return rows

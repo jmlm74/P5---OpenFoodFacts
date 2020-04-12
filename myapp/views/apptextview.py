@@ -2,31 +2,22 @@
 from __future__ import unicode_literals
 
 from prompt_toolkit.shortcuts import print_tokens
-from pygments.token import Token
-import PyInquirer
+
+from prettytable import PrettyTable
 
 from myapp.setup import *
-from myapp.tools import jmlmtools
+from myapp.tools.jmlmtools import clear, colorify
 from myapp.controlers import userchoicetext
 from myapp.models.category import Category
+from myapp.models.store import Store
+from myapp.models.product import Product
+from myapp.models.bookmark import Bookmark
+
 
 
 
 # The style sheet.
-"""
-style = style_from_dict({
-    Token.vert: '#15ce47',
-    Token.vertf: '#50FC00',
-    Token.rouge: '#ff0000',
-    Token.jaune: '#edfc00',
-    Token.bleuc: '#00fce9',
-    Token.bleu: '#00a8fc',
-    Token.bleue: '#004cfc',
-    Token.mauve: '#0400fc',
-    Token.rose: '#fc00f8',
-    Token.blanc: '#ffffff'
-})
-"""
+#Color
 
 
 
@@ -35,7 +26,7 @@ class console_view:
 
     """
     def __init__(self):
-        jmlmtools.clear()
+        clear()
         self.ligneSep2 =[(Token.Green, '------------'),(Token, "\n")]
         self.ligneSep1 = [(Token.Teal, '   ------------------------'),(Token, "\n")]
         self.ligneQuitter = [(Token.Green, '0 - '),
@@ -65,7 +56,7 @@ class console_view:
         loop = True
         choixMenu = 0
         while loop:
-            jmlmtools.clear()
+            clear()
             print("")
             # The text.
             titre = [(Token.Blue," P5 - Open Food Facts "),
@@ -105,7 +96,7 @@ class console_view:
         loop = True
         choixMenu = 0
         while loop:
-            jmlmtools.clear()
+            clear()
             print("")
             titre = [(Token.Blue," P5 - Open Food Facts "),
                     (Token,'-'),
@@ -124,7 +115,7 @@ class console_view:
         """
         loop = True
         while loop:
-            jmlmtools.clear()
+            clear()
             print("")
             titre = [(Token.Blue, " P5 - Open Food Facts "),
                     (Token, '-'),
@@ -143,20 +134,18 @@ class console_view:
         """
         loop = True
         while loop:
-            jmlmtools.clear()
+            clear()
             print("")
             titre = [(Token.Blue, " P5 - Open Food Facts "),
                     (Token, '-'),
                     (Token.Yellow, " Menu4"),(Token, "\n")]
             print_tokens(titre, style=style)
             print_tokens(self.ligneSep1, style=style)
-            choix = userchoicetext.UserChoiceText()
-            prod = choix.product_substitut(idproduct)
-            # print(prod)
+            product = Product()
+            prod = product.get_product_byid(idproduct)
             cat = Category()
-            category = cat.get_category(prod[5])
-            # print(category)
-            ligne = [(Token.Turquoise,"Vous avez selectionné les produits suivant :"),
+            category = cat.get_category_byid(prod[5])
+            ligne = [(Token.Turquoise,"Vous avez selectionné le produit suivant :"),
                      (Token, "\n")]
             print_tokens(ligne,style=style)
             print("")
@@ -178,11 +167,65 @@ class console_view:
                      (Token.White, prod[2]),
                      (Token, "\n")]
             print_tokens(ligne, style=style)
-            
-            "Select storeName from T_Products_stores as T  inner join T_Products as P " \
-            " on P.idProduct=T.idProduct inner join T_Stores as S on T.idStore = S.idStore " \
-            "where P.idProduct = 154;"
-
-            input('toto')
-
-            return 0
+            store = Store()
+            stores = store.get_store_byproduct(idproduct)
+            if len(stores) > 1:
+                mag = "Magasins : "
+                sup1 = True
+            else:
+                mag = "Magasin : "
+                sup1 = False
+            ligne = [(Token.Turquoise,mag)]
+            for stor in stores:
+                ligne.append((Token.White,stor[0]))
+                ligne.append((Token," - "))
+            ligne.append((Token,"\n"))
+            print_tokens(ligne, style=style)
+            subsitutes = product.get_product_bookmarks(idproduct)
+            bookmark= Bookmark()
+            #bookmarks = bookmark.get_bookmark_byproduct(idproduct)
+            bookmarks = [element[1] for element in bookmark.get_bookmark_byproduct(idproduct)]
+            # print(bookmarkss)
+            if len(subsitutes):
+                x = PrettyTable()
+                x.field_names = ['Substitut','id','Libelle','URL','Score','Grade','categorie']
+                x.align['Libelle'] = "l"
+                x.align["Score"] = "r"
+                list_products = []
+                for subsitute in subsitutes:
+                    lignetab = []
+                    if subsitute[0] == idproduct:
+                        continue
+                    list_products.append(subsitute[0])
+                    if subsitute[0] in bookmarks:
+                        lignetab.append('O')
+                        lignetab.extend(subsitute)
+                        lignetab = [colorify(element,['red']) for element in lignetab]
+                    else:
+                        lignetab.append("N")
+                        lignetab.extend(subsitute)
+                    x.add_row(lignetab)
+                ligne = [(Token,"\n"),
+                         (Token.Turquoise,"Ci-dessous les produits de substitution possibles "
+                                          "- nutriscore inférieur ou égal - "),
+                         (Token.DarkRed,"(en rouge les produits déjà mis en substitués/favoris) "),
+                         (Token,"\n")]
+                print_tokens(ligne,style=style)
+                print(x.get_string(fields=['Substitut','id','Libelle','URL','Score','Grade'],reversort=True))
+            message = "Entrez les id des produits qui peuvent remplacer le produit choisi séparés par une " \
+                      "virgule ','. Ils seront alors enregistrés dans la base (0 pour retour au menu) : "
+            choice = userchoicetext.UserChoiceText()
+            choix = choice.choice_prompt_text(message)
+            if choix == '0':
+                return 0
+            listechoix=choix.split(',')
+            for choix in listechoix:
+                if not choix.isdigit():
+                    ligne = colorify("Erreur : Vous devez entrer des id de produits - Abandon "
+                                     "du traitement - Appuyer sur entrée pour continuer",['red','bold'])
+                    print(ligne)
+                    input()
+                    loop = False
+                else:
+                    input('toto')
+                    return 0

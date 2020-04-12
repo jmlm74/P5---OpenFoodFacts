@@ -18,7 +18,8 @@ TABLES = {
     "T_STORES": 'T_Stores',
     "T_PRODUCTS_STORES": "T_Products_stores",
     "T_TEMPPRODUCTS": 'T_TempProducts',
-    "T_PRODUCTS": 'T_Products'
+    "T_PRODUCTS": 'T_Products',
+    "T_BOOKMARKS": 'T_Bookmarks',
     }
 
 #URLs

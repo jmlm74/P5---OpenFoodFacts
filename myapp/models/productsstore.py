@@ -6,7 +6,7 @@ from myapp.setup import *
 """
 
 
-class ProductsStores:
+class ProductsStore:
     """
     """
 

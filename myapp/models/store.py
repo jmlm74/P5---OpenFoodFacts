@@ -1,25 +1,33 @@
 # Created by jmlm at 30/03/2020-20:03 - testP5
-from myapp.tools.jmlmtools import database_connect
+from myapp.tools.jmlmtools import database_connect, jmlm_now
 from myapp.setup import *
-from myapp.tools.jmlmtools import jmlm_now
 
 """"
-Store table --> 
+T_Stores table
+stores are from the temp_products table 
+The relationship with products is a many to many relationship made through T_Products_Stores table 
 """
 
 
 class Store:
-
+    """
+      The Store class
+      Attributes :
+          Table_name
+      The table :
+          2 columns : idStore and storeName
+          Primary key : idStore
+      methods
+          Create/drop table
+          fill table
+          get records
+      """
     def __init__(self) -> object:
         """
         init --> just init the variables !
         """
         self.tableName = TABLES["T_STORES"]
-        self.url = URL_STORES
-        # Data
-        self.idStore = 0
-        self.StoreName = ""
-        self.dateCreation = jmlm_now()
+
 
     def create_table_stores(self):
         """
@@ -48,6 +56,11 @@ class Store:
             dbconn.commit()
 
     def get_store_byproduct(self,idproduct):
+        """
+        get storeName by idproduct
+        :param idproduct:
+        :return: row(s) Stores [(storename),...]
+        """
         sql = """Select storeName from T_Products_stores as T  inner join T_Products as P  \
              on P.idProduct=T.idProduct inner join T_Stores as S on T.idStore = S.idStore  \
              where P.idProduct = %s"""

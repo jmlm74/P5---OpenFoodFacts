@@ -2,7 +2,9 @@ from myapp.models import models
 from myapp.tools import jmlmtools
 from myapp.views import apptextview
 
-
+"""
+The main program
+"""
 
 def main():
     jmlmtools.clear()
@@ -14,7 +16,7 @@ def main():
     elif args.db == "test":
         models.test_database()
         exit(0)
-    appliConsole  = apptextview.console_view()
+    appliConsole  = apptextview.ConsoleView()
     appliConsole.appli()
 
 

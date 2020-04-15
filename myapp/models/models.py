@@ -1,10 +1,15 @@
 # Created by jmlm at 07/04/2020-15:08 - P5
+"""
+Models module --> to test and fill the database
+"""
 from myapp.models.category import Category
 from myapp.models.store import Store
 from myapp.models.product import Product
 from myapp.models.productsstore import ProductsStore
 from myapp.models.bookmark import  Bookmark
+
 from myapp.tools.jmlmtools import database_connect
+
 from myapp.setup import *
 
 
@@ -69,18 +74,23 @@ def fill_database():
 
 def test_database():
     """
-    Test la base :
+    Test database
     - Connexion
-
+    - the tables' existence
+    - The age of the datas --> if > 30 days a message tell the user the datas are too old --> he
+        should recreate the databse and get newer datas
     :return:
     """
+    # test the connection
     connex = database_connect()
     test = connex.connect_db()
     if not test :
         print("Erreur de connexion")
         return False
     print("Test connexion : OK")
+    # test if the tables exist
     sql1 = "show tables like '"
+    connex.disconnect_db()
     with connex as cursor:
         print("Test tables")
         for key, value in TABLES.items():
@@ -95,7 +105,10 @@ def test_database():
                 print("Test OK")
             else:
                 print("ERREUR tests existence table")
-#ToDo mettre > au lieu de < --> tests et demo
+        # test the date of the datas
+        """
+         ToDo mettre > au lieu de < --> tests et demo
+        """
         sql = 'SELECT idCategory from T_Categories where TIMESTAMPDIFF(DAY,now(),dateCreation)<30 limit 1'
         try:
             cursor.execute(sql)
@@ -107,5 +120,3 @@ def test_database():
                 print("La date des données est inférieure à 7 jours.")
         except:
             pass
-
-        connex.disconnect_db()

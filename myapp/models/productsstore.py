@@ -3,24 +3,36 @@ from myapp.tools.jmlmtools import database_connect
 from myapp.setup import *
 
 """
+The many to many relationship table for products and stores
+The table is filled from the temp_products and the store tables
+Rows are like a tuple (idStore,idProduct)
+A many to many relationship table between T_Products and T_Store
+  - 1 product may have many Stores
+  - 1 Store may be a Store for many products
 """
 
 
 class ProductsStore:
     """
+    the class ProductsStore
+        Attributes :
+        Table_name
+    The table :
+        2 columns : idStore and idProduct  --> many many to many relationship table
+            between T_Store and T_Products
+        Primary key : idStore
+        2 constraints (foreign keys) with T_Store on idStore and T_products on id_Products
+    methods
+        Create/drop table
+        fill the records
     """
 
     def __init__(self) -> object:
         """
-        select B.idBrands,B.BrandName,TP.ProductName,P.idProduct from T_Brands as B inner join T_TempProducts as TP
-        on Store = brandName inner join T_Products as P on TP.productName = P.productName order by 1;
-
-        :return:
+        just init the variables
+         :return:
         """
-        self.tableName = TABLES["T_PRODUCTS_STORES"]
-        # Data
-        self.idProduct = 0
-        self.idStore = 0
+        self.table_name = TABLES["T_PRODUCTS_STORES"]
 
     def create_table_products_stores(self):
         """
@@ -28,7 +40,7 @@ class ProductsStore:
         :return:
         """
         with database_connect() as cursor:
-            sql = "drop table if exists %s " % self.tableName
+            sql = "drop table if exists %s " % self.table_name
             param = ""
             cursor.execute(sql, param)
             sql = "CREATE TABLE %s (idStore INT UNSIGNED NOT NULL," \
@@ -37,24 +49,28 @@ class ProductsStore:
                   "INDEX IProduct (IdProduct)," \
                   "CONSTRAINT FK_Stores FOREIGN KEY (idStore) REFERENCES T_Stores(idStore)," \
                   "CONSTRAINT FK_Products FOREIGN KEY (idProduct) REFERENCES T_Products(idProduct)) " \
-                  "ENGINE=InnoDB CHARSET latin1" % self.tableName
+                  "ENGINE=InnoDB CHARSET latin1" % self.table_name
             cursor.execute(sql, param)
 
     def fill_table_products_stores(self):
         """
-        get distinct Store in temp_products table and insert in Store table
+        get distinct Store in temp_products table and insert the ids from the T_Store and the
+        T_Pproducts tables (to get the ids)
         :return:
         """
-        sql = 'insert into T_Stores (storeName) SELECT distinct(Store) FROM test.T_TempProducts order by 1;'
         sql = "insert into %s (idStore,idProduct) select B.idStore,P.idProduct from T_Stores " \
               "as B inner join T_TempProducts as TP on Store = storeName inner join T_Products as P on " \
-              "TP.productName = P.productName order by 1;" % self.tableName
+              "TP.productName = P.productName order by 1;" % self.table_name
         dbconn = database_connect()
         with dbconn as cursor:
             cursor.execute(sql)
             dbconn.commit()
 
     def drop_table_products_stores(self):
+        """
+        drop the table
+        :return:
+        """
         with database_connect() as cursor:
-            sql = "drop table if exists %s " % self.tableName
+            sql = "drop table if exists %s " % self.table_name
             cursor.execute(sql)

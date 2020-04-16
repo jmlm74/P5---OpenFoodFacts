@@ -49,7 +49,7 @@ class Store:
         get distinct Store in temp_products table and insert in Store table
         :return:
         """
-        sql = 'insert into T_Stores (storeName) SELECT distinct(Store) FROM test.T_TempProducts order by 1;'
+        sql = 'insert into T_Stores (storeName) SELECT distinct(Store) FROM T_TempProducts order by 1;'
         dbconn = database_connect()
         with dbconn as cursor:
             cursor.execute(sql)

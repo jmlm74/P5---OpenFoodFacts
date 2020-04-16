@@ -37,7 +37,7 @@ class Bookmark:
         with database_connect() as cursor:
             sql = "drop table if exists %s " % self.table_name
             cursor.execute(sql)
-            sql = "CREATE TABLE IF NOT EXISTS `test`.`T_Bookmarks` (" \
+            sql = "CREATE TABLE IF NOT EXISTS `T_Bookmarks` (" \
                   "`idproduct` INT(10) UNSIGNED NOT NULL," \
                   "`idproduct1` INT(10) UNSIGNED NOT NULL," \
                   "CONSTRAINT `I_Bookmarks` PRIMARY KEY (`idproduct`, `idproduct1`)," \

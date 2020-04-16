@@ -39,14 +39,13 @@ class ProductsStore:
         Drop the table if exists and create it
         :return:
         """
-        with database_connect() as cursor:
+        with  database_connect() as cursor:
             sql = "drop table if exists %s " % self.table_name
             param = ""
             cursor.execute(sql, param)
             sql = "CREATE TABLE %s (idStore INT UNSIGNED NOT NULL," \
                   "idProduct INT UNSIGNED NOT NULL," \
-                  "INDEX IStore (idStore)," \
-                  "INDEX IProduct (IdProduct)," \
+                  "CONSTRAINT `I_Products_Stores` PRIMARY KEY (`idStore`, `idProduct`)," \
                   "CONSTRAINT FK_Stores FOREIGN KEY (idStore) REFERENCES T_Stores(idStore)," \
                   "CONSTRAINT FK_Products FOREIGN KEY (idProduct) REFERENCES T_Products(idProduct)) " \
                   "ENGINE=InnoDB CHARSET latin1" % self.table_name
@@ -58,7 +57,7 @@ class ProductsStore:
         T_Pproducts tables (to get the ids)
         :return:
         """
-        sql = "insert into %s (idStore,idProduct) select B.idStore,P.idProduct from T_Stores " \
+        sql = "insert ignore into %s (idStore,idProduct) select B.idStore,P.idProduct from T_Stores " \
               "as B inner join T_TempProducts as TP on Store = storeName inner join T_Products as P on " \
               "TP.productName = P.productName order by 1;" % self.table_name
         dbconn = database_connect()

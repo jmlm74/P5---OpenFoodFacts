@@ -12,7 +12,7 @@ BASEDIR = Path(__file__).resolve().parent
 DBHOST = '192.168.1.99'  # Database host (may be localhost)
 DBUSER = 'jmlm'
 DBPW = 'jmlmpw'
-DBNAME = 'test'
+DBNAME = 'P5_DB'
 TABLES = {
     "T_CATEGORY": 'T_Categories',
     "T_STORES": 'T_Stores',

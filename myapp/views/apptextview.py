@@ -306,7 +306,7 @@ class ConsoleView:
                 input (colorify("Abandon du traitement - Appuyer sure entrée pour continuer",['red']))
                 continue
             input(colorify("Appuyer sur entrée pour continuer",['lightgreen']))
-            return 0
+            # return 0
 
 
     def display_product_detail(self,prod,category=None,stores=None):

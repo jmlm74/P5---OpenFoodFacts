@@ -3,7 +3,7 @@ chardet==3.0.4
 idna==2.9
 mysql-connector==2.2.9
 prompt-toolkit==1.0.14
-Pygments==2.6.1
+Pygments==2.7.4
 PyInquirer==1.0.3
 regex==2020.4.4
 requests==2.23.0
